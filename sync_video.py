@@ -1,34 +1,33 @@
 #!/usr/bin/env python3
 from __future__ import unicode_literals
 import web
-from video_db import list_videos, check_exists, delete_removed
 import youtube_dl
 
 def get_video(video_id):
     opts = {'download_archive': 'archive',
-            'format': 'bestvideo+bestaudio',
-            'outtmpl': '~/external/video/%(title)s.[%(id)s].%(ext)s'}
+            'format': 'bestvideo[height<=720]+bestaudio/best[height<=720]',
+            'outtmpl': '~/external/video/video1/%(title)s.[%(id)s].%(ext)s'}
     with youtube_dl.YoutubeDL(opts) as ydl:
         ydl.download([video_id])
 
-
+def generic_video(link):
+    opts = {'download_archive': 'archive',
+            'outtmpl': '~/external/video/video2/%(title)s.%(ext)s'}
+    with youtube_dl.YoutubeDL(opts) as ydl:
+        ydl.download([link])
 
 urls = ('/', 'Index',
-        '/save', 'SaveVideo',
-        '/sync', 'SyncVideo'
+        '/syncWL', 'SyncWatchLater',
+        '/syncPN', 'SyncPN',
+        '/Sync', 'SyncVideo'
         )
 
 class Index:
     def GET(self):
         return 'Index'
 
-class SaveVideo:
-    def GET(self):
-        video_id = web.input(id=0)
-        if check_exists(video_id.id) == False:
-            insert_video(video_id.id)
 
-class SyncVideo:
+class SyncWatchLater:
     """Check the watch later list and removed
     any videos not listed there"""
     def GET(self):
@@ -36,6 +35,19 @@ class SyncVideo:
         wl_videos = video_ids.video_ids.split(',')
         for video in wl_videos:
             get_video(video)
+
+class SyncVideo:
+    def GET(self):
+        video_id = web.input(video_id=0)
+        video_id.video_id
+        get_video(video_id.video_id)
+
+class SyncPN:
+    def GET(self):
+        link = web.input(link=0)
+        generic_video(link.link)
+
+
 
 
 
