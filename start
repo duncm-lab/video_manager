@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+rm nohup.out
+nohup ./sync_video.py &
+nohup ./queue_processor.py &
