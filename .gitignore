@@ -1,1 +1,7 @@
 archive
+__pycache__
+*.txt
+*.part
+*.mp4
+*.out
+
