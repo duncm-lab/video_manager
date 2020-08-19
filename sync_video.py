@@ -20,7 +20,8 @@ class SyncVideo:
 
 class Index:
     def GET(self):
-        return 'Index'
+        
+        return '<h1>Index</h1>'
 
 
 class SyncWatchLater:

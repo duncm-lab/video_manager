@@ -5,8 +5,8 @@ import os
 conn = sqlite3.connect('queue.db', check_same_thread=False)
 from vtt_to_srt.__main__ import vtt_to_srt
 
-video_dir = '/mnt/video/youtube/'
-subtitles = video_dir + '/mnt/video/subtitles/'
+video_dir = os.path.join('/', 'mnt', 'video', 'youtube/')
+subtitles = os.path.join('/', 'mnt', 'video', 'subtitles/')
 
 def get_video(video_id):
     """
@@ -16,13 +16,24 @@ def get_video(video_id):
     :param video_id: The unique video identifier 
     """
     opts = {'format': 'bestvideo[height<=720]+bestaudio/best[height<=720]',
-            'outtmpl': video_dir + '/%(title)s.[%(id)s].%(ext)s',
-            'writesubtitles': True,
+            'outtmpl': os.path.join(video_dir, '%(title)s.[%(id)s].%(ext)s'),
+            'writesubtitles': False,
             'allsubtitles': False,
             'subtititleslang': 'en'}
 
+    try:
+        with youtube_dl.YoutubeDL(opts) as ydl:
+            ydl.download([video_id])
+    except youtube_dl.utils.DownloadError:
+        generic_video(video_id)
+
+def generic_video(link):
+    opts = {'outtmpl': video_dir + '%(title)s.%(ext)s',
+            'default_search': 'auto'}
+            
     with youtube_dl.YoutubeDL(opts) as ydl:
-        ydl.download([video_id])
+        ydl.download([link])
+
 
 def check_db(video_id):
     with conn:
@@ -55,9 +66,16 @@ def convert_subtitles():
     vtt_files = [i for i in os.listdir(video_dir) if i.endswith('vtt')]
 
     for i in vtt_files:
-        os.rename(video_dir + i, subtitles + i)
-        vtt_to_srt(subtitles + i)
-        os.remove(subtitles + i)
+        try:
+            vtt_file = os.path.join(video_dir, i)
+            vtt_to_srt(vtt_file)
+            srt_file = vtt_file.replace('.vtt', '.srt')
+            subtitle_path = os.path.join(subtitles, os.path.split(srt_file)[1])
+            os.rename(srt_file, subtitle_path)
+            os.remove(vtt_file)
+            
+        except FileNotFoundError:
+            print('No Subtitles for {}'.format(i))
 
 
 def process_queue():
