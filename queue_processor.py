@@ -86,7 +86,7 @@ def process_queue():
             unprocessed = unprocessed[0]
             get_video(unprocessed)
             mark_queue(unprocessed)
-        convert_subtitles()
+        #convert_subtitles()
 
 if __name__ == '__main__':
     process_queue()
