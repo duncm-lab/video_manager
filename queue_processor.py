@@ -3,10 +3,10 @@ import sqlite3
 import youtube_dl
 import os
 conn = sqlite3.connect('queue.db', check_same_thread=False)
-from vtt_to_srt.__main__ import vtt_to_srt
+#import vtt_to_srt
 
-video_dir = os.path.join('/', 'mnt', 'video', 'youtube/')
-subtitles = os.path.join('/', 'mnt', 'video', 'subtitles/')
+video_dir = os.path.join('/', 'home', 'pi', 'video/')
+subtitles = os.path.join('/', 'home', 'pi', 'subtitles/')
 
 def get_video(video_id):
     """
@@ -58,24 +58,23 @@ def mark_queue(video_id):
     with conn:
         conn.execute('update queue set processed = ? where id = ?', (1, video_id,))
 
-
-def convert_subtitles():
-    """
-    convert vtt to srt for kodi
-    """
-    vtt_files = [i for i in os.listdir(video_dir) if i.endswith('vtt')]
-
-    for i in vtt_files:
-        try:
-            vtt_file = os.path.join(video_dir, i)
-            vtt_to_srt(vtt_file)
-            srt_file = vtt_file.replace('.vtt', '.srt')
-            subtitle_path = os.path.join(subtitles, os.path.split(srt_file)[1])
-            os.rename(srt_file, subtitle_path)
-            os.remove(vtt_file)
-            
-        except FileNotFoundError:
-            print('No Subtitles for {}'.format(i))
+#def convert_subtitles():
+#    """
+#    convert vtt to srt for kodi
+#    """
+#    vtt_files = [i for i in os.listdir(video_dir) if i.endswith('vtt')]
+#
+#    for i in vtt_files:
+#        try:
+#            vtt_file = os.path.join(video_dir, i)
+#            vtt_to_srt(vtt_file)
+#            srt_file = vtt_file.replace('.vtt', '.srt')
+#            subtitle_path = os.path.join(subtitles, os.path.split(srt_file)[1])
+#            os.rename(srt_file, subtitle_path)
+#            os.remove(vtt_file)
+#            
+#        except FileNotFoundError:
+#            print('No Subtitles for {}'.format(i))
 
 
 def process_queue():
