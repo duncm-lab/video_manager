@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 from __future__ import unicode_literals
+import sys
+import os
 import web
+app_path = os.path.dirname(__file__)
+sys.path.insert(0, app_path)
 from queue_processor import add_queue
+
 
 
 

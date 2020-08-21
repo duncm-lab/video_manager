@@ -2,7 +2,12 @@
 import sqlite3
 import youtube_dl
 import os
-conn = sqlite3.connect('queue.db', check_same_thread=False)
+import sys
+
+app_path = os.path.dirname(__file__)
+sys.path.insert(0, app_path)
+
+conn = sqlite3.connect(app_path + '/queue.db', check_same_thread=False)
 #import vtt_to_srt
 
 video_dir = os.path.join('/', 'home', 'pi', 'video/')
