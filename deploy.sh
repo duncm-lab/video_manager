@@ -11,11 +11,8 @@ fi
 
 mkdir $web_folder
 
-
-cp -r archive $web_folder
-cp -r queue.db $web_folder
-cp -r queue_processor.py $web_folder
 cp -r sync_video.py $web_folder
+cp -r add_to_queue.py $web_folder
 
 
 chown -R www-data:www-data $web_folder

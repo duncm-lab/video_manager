@@ -5,10 +5,7 @@ import os
 import web
 app_path = os.path.dirname(__file__)
 sys.path.insert(0, app_path)
-from queue_processor import add_queue
-
-
-
+from add_to_queue import add_queue
 
 
 urls = ('/', 'Index',

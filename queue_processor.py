@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import sqlite3
 import youtube_dl
 import os
@@ -7,11 +8,12 @@ import sys
 app_path = os.path.dirname(__file__)
 sys.path.insert(0, app_path)
 
-conn = sqlite3.connect(app_path + '/queue.db', check_same_thread=False)
+conn = sqlite3.connect(app_path + '/video_db/queue.db', check_same_thread=False)
 #import vtt_to_srt
 
 video_dir = os.path.join('/', 'home', 'pi', 'video/')
 subtitles = os.path.join('/', 'home', 'pi', 'subtitles/')
+
 
 def get_video(video_id):
     """
@@ -32,31 +34,13 @@ def get_video(video_id):
     except youtube_dl.utils.DownloadError:
         generic_video(video_id)
 
+
 def generic_video(link):
     opts = {'outtmpl': video_dir + '%(title)s.%(ext)s',
             'default_search': 'auto'}
             
     with youtube_dl.YoutubeDL(opts) as ydl:
         ydl.download([link])
-
-
-def check_db(video_id):
-    with conn:
-        v = conn.execute("select id from queue where id = ?", (video_id,))
-
-    result = v.fetchone()
-
-    if result == None:
-        return False
-    else:
-        return True
-
-
-def add_queue(video_id):
-    if check_db(video_id) is True:
-        return None
-    with conn:
-        conn.execute('insert into queue values (?,?)', (video_id,0,))
 
 
 def mark_queue(video_id):
