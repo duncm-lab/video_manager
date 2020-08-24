@@ -4,6 +4,7 @@ import sqlite3
 import youtube_dl
 import os
 import sys
+import time
 
 app_path = os.path.dirname(__file__)
 sys.path.insert(0, app_path)
@@ -75,6 +76,7 @@ def process_queue():
             unprocessed = unprocessed[0]
             get_video(unprocessed)
             mark_queue(unprocessed)
+        time.sleep(10)
         #convert_subtitles()
 
 if __name__ == '__main__':
