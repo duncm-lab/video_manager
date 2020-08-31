@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>   
+<epidodedetails>
+    <uniqueid type="$unique_id" default="true"></uniqueid>
+    <studio>$studio</studio>
+    <title>$title</title>
+    <plot>$plot</plot>
+        <fanart><thumb preview="thumbnail.jpg">thumbnail.jpg</thumb></fanart>
+</epidodedetails>

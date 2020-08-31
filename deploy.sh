@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 
 web_folder=/srv/video
-project_folder=/home/pi/code/video
-site_name=finances
+project_folder=/home/ubuntu/code/video
+site_name=video
 site_url=http://localhost:8081/video
 
 if [ -d "$web_folder" ]; then
