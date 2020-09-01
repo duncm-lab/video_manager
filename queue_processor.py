@@ -10,10 +10,12 @@ from string import Template
 import requests
 from PIL import Image
 import io
+import subprocess
 
 client = pymongo.MongoClient()
 database = client['video']
 collection = database['videos']
+kodi = 'root@192.168.1.232' # ssh keys shared
 
 
 app_path = os.path.dirname(__file__)
@@ -25,6 +27,10 @@ sys.path.insert(0, app_path)
 video_dir = os.path.join('/', 'home', 'ubuntu', 'video/')
 subtitles = os.path.join('/', 'home', 'ubuntu', 'subtitles/')
 
+def add_paths_to_db(video_id, path, filename):
+    collection.update_one({'_id': video_id}, {'$set': {'path': path}})
+    collection.update_one({'_id': video_id}, 
+            {'$set': {'filename': os.path.join(path, filename)}})
 
 def video_folder_name(title):
     return title.replace(' ', '_').replace("'", "")
@@ -55,6 +61,8 @@ def get_video(video_id, title):
         generic_video(video_id)
 
 
+
+
 def generic_video(link):
     opts = {'outtmpl': video_dir + '%(title)s.%(ext)s',
             'default_search': 'auto'}
@@ -71,6 +79,9 @@ def write_nfo(video_id, title):
     path = os.path.join(video_dir, video_folder_name(title), 'tvshow.nfo')
     with open(path, 'w') as fl:
         fl.write(out_template)
+
+
+
 
 
 def mark_queue(video_id):
