@@ -1,0 +1,12 @@
+[Unit]
+Description=Video Queue Processing
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ubuntu/code/video
+ExecStart=/home/ubuntu/code/video/queue_processor.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

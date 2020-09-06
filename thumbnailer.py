@@ -1,12 +1,17 @@
+#!/usr/bin/env python3
 import os
 import subprocess
 from string import Template
 
 kodi_host = 'root@192.168.1.232'
-smb_url = 'smb://192.168.1.135/videos' 
+smb_url = 'smb://192.168.1.135/videos/' 
+video_dir = '/home/ubuntu/video/'
 
 #get the files from the video dir
-file_dicts = [{os.path.split(i[0])[1]: i[2]} for i in os.walk('/home/ubuntu/video')][1:]
+files = [i for i in os.listdir(video_dir)
+        if i.split('.')[1] != 'nfo']
+
+files.sort()
 
 
 def remote_query(sql):
@@ -15,26 +20,36 @@ def remote_query(sql):
         '/storage/.kodi/userdata/Database/Textures13.db',
         "\"{}\"".format(sql)])
 
-staging = []
-#strip out un-needed files
-for i in file_dicts:
-    for key, values in i.items():
-        folder_path = smb_url + '/' + key
-        video_file = folder_path + '/' + [v for v in values 
-                if v not in ['tvshow.nfo', 'thumbnail.jpg']][0]
-        staging.append({'folder': folder_path + '/',
-            'video': video_file,
-            'thumbnail': folder_path + '/' + 'thumbnail.jpg'}) 
-
-
 remote_query('delete from path;')
 
 
 with open('add_images_template.sql', 'r') as fl:
     sql_template = Template(fl.read())
 
-for i in staging:
-    sql = sql_template.substitute(folderurl=i['folder'],
-            videourl=i['video'],
-            texture=i['thumbnail'])
+
+def chunk(x):
+    count = x
+    out = []
+    while count != []:
+        print(count)
+        out.append(x[0:2])
+        count = count[2:]
+    return out
+
+for i in chunk(files):
+    thumb = smb_url + i[0]
+    video = smb_url + i[1]
+    print(video)
+    sql = sql_template.substitute(folderurl=smb_url,
+            videourl=video, texture=thumb)
+    print(sql)
     remote_query(sql)
+    
+
+
+
+
+
+
+
+

@@ -1,4 +1,3 @@
 #!/usr/bin/env sh
 
-kill -9 `ps -x | grep "[p]ython3 ./sync_video.py" | cut -d " " -f1`
-kill -9 `ps -x | grep "[p]ython3 ./queue_processor.py" | cut -d " " -f1`
+kill -9 `ps -x | grep -i "[p]ython3 \./queue_processor" | awk '{print $1}'`

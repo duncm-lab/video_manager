@@ -62,7 +62,6 @@ def get_video(video_id, title):
 
 
 
-
 def generic_video(link):
     opts = {'outtmpl': video_dir + '%(title)s.%(ext)s',
             'default_search': 'auto'}
@@ -75,7 +74,8 @@ def write_nfo(video_id, title):
     with open('template.nfo', 'r') as fl:
         template = Template(fl.read())
     out_template = template.substitute(unique_id=i['_id'], studio=i['uploader'],
-            title=i['title'], plot=i['description'])
+            title=i['title'], plot=i['description'],
+            date_prem=i['upload_date'])
     path = os.path.join(video_dir, video_folder_name(title), 'tvshow.nfo')
     with open(path, 'w') as fl:
         fl.write(out_template)
