@@ -24,8 +24,7 @@ sys.path.insert(0, app_path)
 #conn = sqlite3.connect(app_path + '/video_db/queue.db', check_same_thread=False)
 #import vtt_to_srt
 
-video_dir = os.path.join('/', 'home', 'ubuntu', 'video/')
-subtitles = os.path.join('/', 'home', 'ubuntu', 'subtitles/')
+video_dir = os.path.join('/', 'home', 'ubuntu', 'mnt', 'files', 'share', 'video/')
 
 def add_paths_to_db(video_id, path, filename):
     collection.update_one({'_id': video_id}, {'$set': {'path': path}})
@@ -33,7 +32,7 @@ def add_paths_to_db(video_id, path, filename):
             {'$set': {'filename': os.path.join(path, filename)}})
 
 def video_folder_name(title):
-    return title.replace(' ', '_').replace("'", "")
+    return title.replace(' ', '_').replace("'", "").replace('|', '').replace('/',' ')
 
 def get_video(video_id, title):
     """
@@ -79,9 +78,6 @@ def write_nfo(video_id, title):
     path = os.path.join(video_dir, video_folder_name(title), 'tvshow.nfo')
     with open(path, 'w') as fl:
         fl.write(out_template)
-
-
-
 
 
 def mark_queue(video_id):

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+vid=$(echo $1 | awk -F= '{print $2}')
+
+curl -X GET "http://localhost:8081/video/Sync?video_id=$vid"
