@@ -2,6 +2,7 @@ archive
 video_env/
 __pycache__
 *.txt
+!requirements.txt
 *.part
 *.mp4
 *.out

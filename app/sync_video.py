@@ -36,4 +36,7 @@ class SyncWatchLater:
             get_video(video)
 
 
-application = web.application(urls, globals()).wsgifunc()
+#application = web.application(urls, globals()).wsgifunc()
+application = web.application(urls, globals())
+if __name__ == '__main__':
+    application.run()
