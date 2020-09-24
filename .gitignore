@@ -8,4 +8,4 @@ __pycache__
 *.out
 *.db
 x*
-
+app/queue_processor/env/
