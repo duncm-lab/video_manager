@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-rm nohup.out
-nohup ./queue_processor.py &

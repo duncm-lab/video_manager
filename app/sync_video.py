@@ -16,8 +16,12 @@ urls = ('/', 'Index',
 
 class SyncVideo:
     def GET(self):
-        video_id = web.input(video_id=0)
-        add_queue(video_id.video_id)
+        try:
+            video_id = web.input(video_id=0)
+            add_queue(video_id.video_id)
+        except Exception as e:
+            with open('sync_exception.log', 'w') as fl:
+                fl.write(str(e))
 
 
 class Index:
@@ -37,6 +41,11 @@ class SyncWatchLater:
 
 
 #application = web.application(urls, globals()).wsgifunc()
-application = web.application(urls, globals())
+try:
+    application = web.application(urls, globals())
+except Exception as e:
+    with open('app.log', 'w') as fl:
+        fl.write(str(e))
+
 if __name__ == '__main__':
     application.run()
