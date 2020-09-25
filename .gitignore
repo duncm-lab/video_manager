@@ -9,3 +9,4 @@ __pycache__
 *.db
 x*
 app/queue_processor/env/
+app/sync_video/env/
