@@ -1,19 +1,30 @@
 version: '3.8'
+networks:
+    video:
+        external: true
 services:
     mongo:
       image: mongo
       restart: always
+      hostname: mongo
+      container_name: mongo
+      networks:
+          - video
     mongo-express:
         image: mongo-express
+        networks:
+            - video
         ports:
             - 8081:8081
-    video:
-        build: .
+    sync_video:
+        container_name: sync_video
+        build: ./sync_video/
+        networks:
+            - video
         ports: 
             - 8080:8080
-        volumes:
-            - /mnt/files/share/video
     queue_processor:
+        container_name: queue_processor
         build: ./queue_processor
-        ports: 
-            - 27017:27017
+        networks:
+            - video

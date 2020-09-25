@@ -12,13 +12,12 @@ import io
 import subprocess
 import re
 
-CLIENT = pymongo.MongoClient()
-DATABASE = CLIENT['video']
-COLLECTION = DATABASE['videos']
-
-
 APP_PATH = os.path.dirname(__file__)
 sys.path.insert(0, APP_PATH)
+
+CLIENT = pymongo.MongoClient('mongodb://mongo:27017')
+DATABASE = CLIENT['video']
+COLLECTION = DATABASE['videos']
 
 VIDEO_DIR = os.path.join('/mnt', 'files', 'share', 'video/')
 
@@ -69,7 +68,7 @@ def generic_video(link):
 
 def write_nfo(video_id, title):
     i = COLLECTION.find_one({'_id': video_id})
-    with open('./app/queue_processor/template.nfo', 'r') as fl:
+    with open('template.nfo', 'r') as fl:
         template = Template(fl.read())
     out_template = template.substitute(unique_id=i['_id'], studio=i['uploader'],
             title=i['title'], plot=i['description'],
