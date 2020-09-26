@@ -8,6 +8,8 @@ services:
       restart: always
       hostname: mongo
       container_name: mongo
+      volumes:
+          - /mnt/files/data/mongo/:/data/db
       networks:
           - video
     mongo-express:
@@ -19,6 +21,7 @@ services:
     sync_video:
         container_name: sync_video
         build: ./sync_video/
+        restart: always
         networks:
             - video
         ports: 
@@ -26,5 +29,8 @@ services:
     queue_processor:
         container_name: queue_processor
         build: ./queue_processor
+        restart: always
+        volumes: 
+            - /mnt/files/share/video:/mnt/files/share/video
         networks:
             - video
