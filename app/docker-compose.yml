@@ -32,5 +32,8 @@ services:
         restart: always
         volumes: 
             - /mnt/files/share/video:/mnt/files/share/video
+            - /mnt/files/data/source/ffmpeg_bin:/ffmpeg
         networks:
             - video
+networks:
+    video:

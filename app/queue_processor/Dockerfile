@@ -1,12 +1,13 @@
-FROM python:3.8
+FROM ubuntu:latest
 WORKDIR /code
 COPY requirements.txt .
-RUN pip install -r requirements.txt
-RUN wget http://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz
-RUN tar -xvf yasm-1.3.0.tar.gz && cd yasm-1.3.0 && ./configure && make && make install
-RUN cd /code
-RUN wget https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
-RUN tar -xvf ffmpeg-snapshot.tar.bz2 && cd ffmpeg && ./configure && make && make install
+RUN apt-get update && apt-get install -y \
+        software-properties-common
+RUN add-apt-repository universe
+RUN apt-get update && apt-get install -y \
+        python3-pip
+RUN pip3 install -r requirements.txt
+RUN apt-get install -y ffmpeg
 COPY queue_processor.py .
 COPY template.nfo .
 CMD ["python3", "queue_processor.py"]
