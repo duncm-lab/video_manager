@@ -35,5 +35,56 @@ services:
             - /mnt/files/data/source/ffmpeg_bin:/ffmpeg
         networks:
             - video
+    elasticsearch:
+        image: elasticsearch:7.7.0
+        restart: always
+        container_name: elasticsearch
+        hostname: elasticsearch
+        environment:
+            - "discovery.type=single-node"
+        networks:
+            - video
+        ports:
+            - 9200:9200
+            - 9300:9300
+    kibana:
+        image: kibana:7.7.0
+        restart: always
+        container_name: kibana
+        hostname: kibana
+        networks:
+            - video
+        ports:
+            - 5601:5601
+    logstash:
+        image: logstash:7.7.0
+        environment:
+            LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+            JVM_OPTS: >
+                --add-opens=java.base/java.lang=ALL-UNNAMED
+                --add-opens=java.base/java.security=ALL-UNNAMED
+                --add-opens=java.base/java.util=ALL-UNNAMED
+                --add-opens=java.base/java.security.cert=ALL-UNNAMED
+                --add-opens=java.base/java.util.zip=ALL-UNNAMED
+                --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+                --add-opens=java.base/java.util.regex=ALL-UNNAMED
+                --add-opens=java.base/java.net=ALL-UNNAMED
+                --add-opens=java.base/java.io=ALL-UNNAMED
+                --add-opens=java.base/java.lang=ALL-UNNAMED
+                --add-opens=java.base/javax.crypto=ALL-UNNAMED
+                --add-opens=java.management/sun.management=ALL-UNNAMED
+        restart: always
+        container_name: logstash
+        hostname: logstash
+        networks:
+            - video
+        ports:
+            - 9600:9600
+            - 8089:8089
+        volumes:
+            - /mnt/files/data/logstash/:/usr/share/logstash/pipeline/
+networks:
+    video:
+        external: true
 networks:
     video:
