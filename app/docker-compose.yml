@@ -10,70 +10,32 @@ services:
       container_name: mongo
       volumes:
           - /mnt/files/data/mongo/:/data/db
-      networks:
-          - video
+      network_mode: host
     mongo-express:
         image: mongo-express
-        networks:
-            - video
+        container_name: mongo-express
+        hostname: mongo-express
+        environment:
+            ME_CONFIG_MONGODB_SERVER: localhost
+        network_mode: host
         ports:
             - 8081:8081
-    sync_video:
-        container_name: sync_video
-        build: ./sync_video/
-        restart: always
-        networks:
-            - video
-        ports: 
-            - 8080:8080
     queue_processor:
         container_name: queue_processor
+        hostname: queue_processor
         build: ./queue_processor
         restart: always
         volumes: 
             - /mnt/files/share/video:/mnt/files/share/video
-            - /mnt/files/data/source/ffmpeg_bin:/ffmpeg
-        networks:
-            - video
-    elasticsearch:
-        image: elasticsearch:7.9.1
+            - /mnt/files/data/queue_processor/logs:/queue_processor_logs
+        network_mode: host
+    sync_video:
+        container_name: sync_video
+        build: ./sync_video/
         restart: always
-        container_name: elasticsearch
-        hostname: elasticsearch
-        environment:
-            - "discovery.type=single-node"
-        networks:
-            - video
-        ports:
-            - 9200:9200
-            - 9300:9300
-    kibana:
-        image: kibana:7.9.1
-        restart: always
-        container_name: kibana
-        hostname: kibana
-        links:
-            - elasticsearch:elasticsearch
-        networks:
-            - video
-        ports:
-            - 5601:5601
-    logstash:
-        image: logstash:7.9.1
-        restart: always
-        container_name: logstash
-        hostname: logstash
-        volumes:
-            - /mnt/files/data/logstash/pipeline/:/usr/share/logstash/pipeline
-        links:
-            - elasticsearch:elasticsearch
-        networks:
-            - video
-        ports:
-            - 9600:9600
-            - 8089:8089
-            - 5044:5044
-        command: logstash -f ./config/logstash-sample.conf
+        network_mode: host
+        ports: 
+            - 8080:8080
 networks:
     video:
         external: true

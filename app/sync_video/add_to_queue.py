@@ -12,7 +12,7 @@ sys.path.insert(0, APP_PATH)
 
 #conn = sqlite3.connect('/home/ubuntu/code/video/video_db/queue.db', check_same_thread=False)
 INFO_EXTRACTOR = YoutubeDL(params={'simulate': True})
-CLIENT = pymongo.MongoClient('mongodb://mongo:27017')
+CLIENT = pymongo.MongoClient('mongodb://localhost:27017')
 DATABASE = CLIENT['video']
 COLLECTION = DATABASE['videos']
 

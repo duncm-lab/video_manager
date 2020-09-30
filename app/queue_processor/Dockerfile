@@ -10,8 +10,13 @@ RUN pip3 install -r requirements.txt
 RUN apt-get install -y ffmpeg
 RUN apt-get install -y curl
 RUN apt-get install -y vim
-COPY filebeat_install.sh .
-RUN ./filebeat_install.sh
+RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.9.2-amd64.deb
+RUN dpkg -i filebeat-7.9.2-amd64.deb
+COPY ./filebeat_config/filebeat.yml /etc/filebeat/filebeat.yml
+#RUN filebeat modules enable system
+#COPY ./filebeat_config/system.yml /ect/filebeat/modules.d/system.yml
+#RUN filebeat setup -e
+#RUN service filebeat start
 COPY queue_processor.py .
 COPY template.nfo .
 CMD ["python3", "queue_processor.py"]

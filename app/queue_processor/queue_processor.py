@@ -11,11 +11,17 @@ from PIL import Image
 import io
 import subprocess
 import re
+import logging
+
+logging.basicConfig(filename = '/queue_processor_logs/queue_processor.log',
+        level = logging.DEBUG)
+
+logger = logging.getLogger()
 
 APP_PATH = os.path.dirname(__file__)
 sys.path.insert(0, APP_PATH)
 
-CLIENT = pymongo.MongoClient('mongodb://mongo:27017')
+CLIENT = pymongo.MongoClient('mongodb://localhost:27017')
 DATABASE = CLIENT['video']
 COLLECTION = DATABASE['videos']
 
@@ -30,8 +36,9 @@ def add_paths_to_db(video_id, path, filename):
 
 def video_folder_name(title):
     replace_chars = [' ', "'", '|', '?', '/', ':']
-    re_comp = re.compile('[^A-Za-z0-9.]')
-    return re_comp.sub('_', title)
+    re_comp0 = re.compile('[^A-Za-z0-9.]')
+    re_comp1 = re.compile('_{2,}')
+    return re_comp1.sub('_', re_comp0.sub('_', title))
 
 
 def get_video(video_id, title):
@@ -51,7 +58,8 @@ def get_video(video_id, title):
             'allsubtitles': False,
             'writethumbnail': False,
             'writedescription': False,
-            'subtititleslang': 'en'}
+            'subtititleslang': 'en',
+            'logger': logger}
 
     try:
         with youtube_dl.YoutubeDL(opts) as ydl:
