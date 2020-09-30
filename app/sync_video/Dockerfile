@@ -1,5 +1,5 @@
 #set base image
-FROM python:latest
+FROM python:3.8-alpine
 #set the container working directory
 WORKDIR /code
 #copy dependencies list
@@ -9,5 +9,8 @@ RUN pip install -r requirements.txt
 #copy modules to working dir
 COPY add_to_queue.py .
 COPY sync_video.py .
+ENV FLASK_APP sync_video.py
+ENV FLASK_RUN_HOST 0.0.0.0
+EXPOSE 8080
 #run program
-CMD ["python3", "sync_video.py"]
+CMD ["flask", "run", "--port=8080"]
