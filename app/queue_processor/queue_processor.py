@@ -53,6 +53,7 @@ def get_video(video_id, title):
     output_folder = os.path.join(VIDEO_DIR, video_folder_name(title))
     opts = PROCESS_YOUTUBE_DL_PARAMS
     opts['outtmpl'] = output_folder
+    opts['logger'] = logger
 
 
     try:

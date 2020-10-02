@@ -24,14 +24,14 @@ services:
         restart: always
         volumes: 
             - /mnt/files/share/video:/mnt/files/share/video
-            - /mnt/files/data/queue_processor/logs:/queue_processor_logs
+            - /mnt/files/data/logs:/queue_processor_logs
         network_mode: host
     sync_video:
         container_name: sync_video
         build: ./sync_video/
         restart: always
         volumes:
-            - /mnt/files/data/sync_video/logs:/sync_video_logs
+            - /mnt/files/data/logs:/sync_video_logs
         network_mode: host
         ports: 
             - 8080:8080

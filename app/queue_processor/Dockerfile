@@ -18,6 +18,7 @@ COPY ./filebeat_config/filebeat.yml /etc/filebeat/filebeat.yml
 #RUN filebeat setup -e
 #RUN service filebeat start
 COPY config.py .
+COPY database.py .
 COPY queue_processor.py .
 COPY template.nfo .
 CMD ["python3", "queue_processor.py"]
