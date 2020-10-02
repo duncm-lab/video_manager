@@ -44,11 +44,30 @@ for i in video_folders:
         item['folder'] = i
         staging.append(item)
 
+def create_link(src, dst):
+    """
+    create a symlink between the physical file location 
+    and the folders created by tags
+    """
+    if not os.path.exists(dst):
+        os.symlink(src, dst)
+
+"""
+iterate the staged objects, if the tag
+is a str then we only need to create a 
+symlink for that folder else we
+iterate the tags and create the
+symlinks as necessary
+"""
 for i in staging:
-    for j in i['tags']:
-        #os.symlink(i['folder'], BASE_PATH + j + '/' + title)
-        src = i['folder']
-        dst = BASE_PATH + j + '/' + i['title']
-        if not os.path.exists(dst):
-            os.symlink(src, dst)
+    src = i['folder']
+    if type(i['tags']) == str:
+        dst = BASE_PATH + i['tags'] + '/' + i['title']
+        create_link(src, dst)
+    else:
+        for j in i['tags']:
+            dst = BASE_PATH + j + '/' + i['title']
+            create_link(src, dst)
+
+
         

@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
+"""
+Read the document tags in the database and create folders
+based on those tags if they do not exist
+"""
 
 import os
 import sys
 import pymongo
 from string import Template
 
-BASE_PATH = '/mnt/files/share/'
 
-CLIENT = pymongo.MongoClient()
-DATABASE = CLIENT['video']
-COLLECTION = DATABASE['videos']
+from app import config as cfg
+from app.config import BASE_PATH
+
+CLIENT = pymongo.MongoClient(cfg.MONGO_SERVER)
+DATABASE = CLIENT[cfg.MONGO_DATABASE]
+COLLECTION = DATABASE[cfg.MONGO_COLLECTION]
 
 tagged = [(i['tags']) for i in COLLECTION.find() if 'tags' in i.keys()]
 
@@ -30,29 +36,3 @@ def create_path(folder):
 
 for i in folders:
     create_path(i)
-
-"""
-[name]
-wide links = yes
-follow symlinks = yes
-comment = name
-browseable = yes
-path = BASE_PATH + name
-guest ok = yes
-read only = yes
-create mask = 0700
-"""
-
-samba_template = Template('[$name]\n \
-    wide links = yes\n \
-    follow symlinks = yes\n \
-    comment = $name\n \
-    browseable = yes\n \
-    path = $path$name\n \
-    guest ok = yes\n \
-    read only = yes\n \
-    create mask = 0700')
-
-if __name__ == '__main__':
-    t = samba_template.substitute(name=sys.argv[1], path=BASE_PATH)
-    print(t)
