@@ -13,19 +13,24 @@ import subprocess
 import re
 import logging
 
-logging.basicConfig(filename = '/queue_processor_logs/queue_processor.log',
-        level = logging.DEBUG)
+APP_PATH = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, APP_PATH)
+
+import config as cfg
+from config import VIDEO_DIR
+
+logging.basicConfig(filename = cfg.QUEUE_PROCESSOR_LOG,
+        level = getattr(logging, cfg.LOG_LEVEL))
 
 logger = logging.getLogger()
 
 APP_PATH = os.path.dirname(__file__)
 sys.path.insert(0, APP_PATH)
 
-CLIENT = pymongo.MongoClient('mongodb://localhost:27017')
-DATABASE = CLIENT['video']
-COLLECTION = DATABASE['videos']
+CLIENT = pymongo.MongoClient(cfg.MONGO_SERVER)
+DATABASE = CLIENT[cfg.MONGO_DATABASE]
+COLLECTION = DATABASE[cfg.MONGO_COLLECTION]
 
-VIDEO_DIR = os.path.join('/mnt', 'files', 'share', 'video/')
 
 
 def add_paths_to_db(video_id, path, filename):

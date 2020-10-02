@@ -7,17 +7,17 @@ import pymongo
 from youtube_dl import YoutubeDL
 from datetime import datetime
 
-APP_PATH = os.path.dirname(__file__)
+APP_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, APP_PATH)
 
-#conn = sqlite3.connect('/home/ubuntu/code/video/video_db/queue.db', check_same_thread=False)
-INFO_EXTRACTOR = YoutubeDL(params={'simulate': True})
-CLIENT = pymongo.MongoClient('mongodb://localhost:27017')
-DATABASE = CLIENT['video']
-COLLECTION = DATABASE['videos']
+import config as cfg
 
-def get_video_info(video_id):
-    #info_keys = ['uploader', 'upload_date', 'description']
+INFO_EXTRACTOR = YoutubeDL(params=cfg.YOUTUBE_DL_PARAMS)
+CLIENT = pymongo.MongoClient(cfg.MONGO_SERVER)
+DATABASE = CLIENT[cfg.MONGO_DATABASE]
+COLLECTION = DATABASE[cfg.MONGO_COLLECTION]
+
+def get_video_info(video_id, tags=[]):
     video_info = INFO_EXTRACTOR.extract_info(video_id)
     info = {
         '_id': video_info['id'],
@@ -27,15 +27,12 @@ def get_video_info(video_id):
         'upload_date': datetime.strptime(video_info['upload_date'],
             '%Y%m%d'),
         'description': video_info['description'],
-        'thumbnail': video_info['thumbnail']}
+        'thumbnail': video_info['thumbnail'],
+        'tags': tags}
 
     return info
 
 def check_db(video_id):
-#    with conn:
-#        v = conn.execute("select id from queue where id = ?", (video_id,))
-#
-#    result = v.fetchone()
     result = [i['_id'] for i in COLLECTION.find({'_id': video_id})]
 
     if result == []:
@@ -43,10 +40,8 @@ def check_db(video_id):
     else:
         return True
 
-def add_queue(video_id):
+def add_queue(video_id, tags=[]):
     if check_db(video_id) is True:
         return None
 
-    COLLECTION.insert_one(get_video_info(video_id))
-   # with conn:
-   #     conn.execute('insert into queue values (?,?)', (video_id,0,))
+    COLLECTION.insert_one(get_video_info(video_id, tags))

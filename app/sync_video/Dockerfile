@@ -9,6 +9,7 @@ RUN pip install -r requirements.txt
 #copy modules to working dir
 COPY add_to_queue.py .
 COPY sync_video.py .
+COPY config.py .
 ENV FLASK_APP sync_video.py
 ENV FLASK_RUN_HOST 0.0.0.0
 EXPOSE 8080

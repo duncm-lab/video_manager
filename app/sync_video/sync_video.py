@@ -5,13 +5,14 @@ import os
 import logging
 from flask import Flask
 
-APP_PATH = os.path.dirname(__file__)
+APP_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, APP_PATH)
 
 from add_to_queue import add_queue
+import config as cfg
 
-logging.basicConfig(filename = '/sync_video_logs/sync_video.log',
-        level = logging.DEBUG)
+logging.basicConfig(filename = cfg.SYNC_VIDEO_LOG,
+        level = getattr(logging, cfg.LOG_LEVEL))
 
 logger = logging.getLogger()
 
@@ -25,6 +26,18 @@ def index():
 def sync_video(video_id):
     try:
         add_queue(video_id)
+    except Exception as e:
+        logger.error(e)
+    return ''
+
+@app.route('/Sync/<video_id>/<tags>')
+def sync_video_tags(video_id, tags):
+    if tags.find(',') != -1:
+        tags = [tag.lower() for tag in tags.split(',')]
+    else:
+        tags = tags.lower()
+    try:
+        add_queue(video_id, tags)
     except Exception as e:
         logger.error(e)
     return ''
