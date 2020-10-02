@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+command line script to call the endpoint
+"""
 import sys
 import requests
 

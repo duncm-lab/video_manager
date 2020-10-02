@@ -14,6 +14,12 @@ create mask = 0700
 
 """
 import sys
+import os
+
+APP_PATH = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.split(APP_PATH)[0]
+sys.path.insert(0, PROJECT_ROOT)
+
 from string import Template
 from app.config import BASE_PATH
 

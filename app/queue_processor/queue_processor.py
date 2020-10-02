@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
+"""
+Download and process videos with youtube_dl
+"""
 
 import youtube_dl
 import os
 import sys
 import time
-import pymongo
 from string import Template
 import requests
 from PIL import Image
@@ -12,12 +14,14 @@ import io
 import subprocess
 import re
 import logging
+from database import COLLECTION
 
 APP_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, APP_PATH)
 
 import config as cfg
 from config import VIDEO_DIR
+from config import PROCESS_YOUTUBE_DL_PARAMS
 
 logging.basicConfig(filename = cfg.QUEUE_PROCESSOR_LOG,
         level = getattr(logging, cfg.LOG_LEVEL))
@@ -26,17 +30,6 @@ logger = logging.getLogger()
 
 APP_PATH = os.path.dirname(__file__)
 sys.path.insert(0, APP_PATH)
-
-CLIENT = pymongo.MongoClient(cfg.MONGO_SERVER)
-DATABASE = CLIENT[cfg.MONGO_DATABASE]
-COLLECTION = DATABASE[cfg.MONGO_COLLECTION]
-
-
-
-def add_paths_to_db(video_id, path, filename):
-    COLLECTION.update_one({'_id': video_id}, {'$set': {'path': path}})
-    COLLECTION.update_one({'_id': video_id}, 
-            {'$set': {'filename': os.path.join(path, filename)}})
 
 
 def video_folder_name(title):
@@ -57,14 +50,10 @@ def get_video(video_id, title):
     if os.path.exists(path) is False:
         os.mkdir(path)
 
-    opts = {'format': 'bestvideo[height<=720]+bestaudio/best[height<=720]',
-            'outtmpl': os.path.join(VIDEO_DIR, video_folder_name(title), '%(title)s.%(ext)s'),
-            'writesubtitles': False,
-            'allsubtitles': False,
-            'writethumbnail': False,
-            'writedescription': False,
-            'subtititleslang': 'en',
-            'logger': logger}
+    output_folder = os.path.join(VIDEO_DIR, video_folder_name(title))
+    opts = PROCESS_YOUTUBE_DL_PARAMS
+    opts['outtmpl'] = output_folder
+
 
     try:
         with youtube_dl.YoutubeDL(opts) as ydl:

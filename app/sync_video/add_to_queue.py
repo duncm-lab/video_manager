@@ -3,19 +3,16 @@
 #import sqlite3
 import sys
 import os
-import pymongo
 from youtube_dl import YoutubeDL
 from datetime import datetime
+from database import COLLECTION
 
 APP_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, APP_PATH)
 
 import config as cfg
 
-INFO_EXTRACTOR = YoutubeDL(params=cfg.YOUTUBE_DL_PARAMS)
-CLIENT = pymongo.MongoClient(cfg.MONGO_SERVER)
-DATABASE = CLIENT[cfg.MONGO_DATABASE]
-COLLECTION = DATABASE[cfg.MONGO_COLLECTION]
+INFO_EXTRACTOR = YoutubeDL(params=cfg.SYNC_YOUTUBE_DL_PARAMS)
 
 def get_video_info(video_id, tags=[]):
     video_info = INFO_EXTRACTOR.extract_info(video_id)

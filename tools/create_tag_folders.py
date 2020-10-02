@@ -9,6 +9,10 @@ import sys
 import pymongo
 from string import Template
 
+APP_PATH = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.split(APP_PATH)[0]
+sys.path.insert(0, PROJECT_ROOT)
+
 
 from app import config as cfg
 from app.config import BASE_PATH
