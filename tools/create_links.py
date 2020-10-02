@@ -10,8 +10,6 @@ PROJECT_ROOT = os.path.split(APP_PATH)[0]
 sys.path.insert(0, PROJECT_ROOT)
 
 
-RE_FILE_EXTENSION = re.compile('\.\w+$')
-
 BASE_PATH = '/mnt/files/share/'
 
 CLIENT = pymongo.MongoClient()
@@ -51,11 +49,12 @@ this is due to the folder names being sanitized
 of bad path characters
 """
 for i in video_folders:
+    re_file_extension = re.compile('\.\w+$')
     files = os.listdir(i)
     if len(files) != 3:
         print(i) #files should be thumbnail.jpg, tvshow.nfo and media file
     filename = [f for f in files if f not in ['thumbnail.jpg', 'tvshow.nfo']][0]
-    title = filename.replace(RE_FILE_EXTENSION.search(filename).group(), '')
+    title = filename.replace(re_file_extension.search(filename).group(), '')
     title = ''.join(map(strip_non_ascii, title))
     if title in tagged_names:
         index = tagged_names.index(title)
