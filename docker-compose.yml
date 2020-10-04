@@ -26,5 +26,3 @@ services:
             - /mnt/files/share/video:/mnt/files/share/video
             - /mnt/files/data/logs:/logs
         network_mode: host
-        ports: 
-            - 8080:5000
