@@ -10,5 +10,5 @@ __pycache__
 *.bak*
 *.log
 x*
-app/queue_processor/env/
-app/sync_video/env/
+env/
+env/

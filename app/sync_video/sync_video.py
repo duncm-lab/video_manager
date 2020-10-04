@@ -7,9 +7,10 @@ from flask import Flask
 
 APP_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, APP_PATH)
+sys.path.insert(0, os.getcwd())
 
+import app.config as cfg
 from add_to_queue import add_queue
-import config as cfg
 
 logging.basicConfig(filename = cfg.SYNC_VIDEO_LOG,
         level = getattr(logging, cfg.LOG_LEVEL))

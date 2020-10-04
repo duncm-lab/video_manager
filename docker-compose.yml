@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+    mongo:
+      image: mongo
+      restart: always
+      hostname: mongo
+      container_name: mongo
+      volumes:
+          - /mnt/files/data/mongo/:/data/db
+      network_mode: host
+    mongo-express:
+        image: mongo-express
+        container_name: mongo-express
+        hostname: mongo-express
+        environment:
+            ME_CONFIG_MONGODB_SERVER: localhost
+        network_mode: host
+        ports:
+            - 8081:8081
+    app:
+        container_name: video_app
+        hostname: video_app 
+        build: .
+        restart: always
+        volumes: 
+            - /mnt/files/share/video:/mnt/files/share/video
+            - /mnt/files/data/logs:/logs
+        network_mode: host
+        ports: 
+            - 8080:5000

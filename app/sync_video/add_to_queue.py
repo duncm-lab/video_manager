@@ -5,12 +5,13 @@ import sys
 import os
 from youtube_dl import YoutubeDL
 from datetime import datetime
-from database import COLLECTION
 
 APP_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, APP_PATH)
 
-import config as cfg
+from app.database import COLLECTION
+
+import app.config as cfg
 
 INFO_EXTRACTOR = YoutubeDL(params=cfg.SYNC_YOUTUBE_DL_PARAMS)
 

@@ -14,14 +14,15 @@ import io
 import subprocess
 import re
 import logging
-from database import COLLECTION
 
 APP_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, APP_PATH)
+sys.path.insert(0, os.getcwd())
 
-import config as cfg
-from config import VIDEO_DIR
-from config import PROCESS_YOUTUBE_DL_PARAMS
+import app.config as cfg
+from app.database import COLLECTION
+from app.config import VIDEO_DIR
+from app.config import PROCESS_YOUTUBE_DL_PARAMS
 
 logging.basicConfig(filename = cfg.QUEUE_PROCESSOR_LOG,
         level = getattr(logging, cfg.LOG_LEVEL))
@@ -102,6 +103,7 @@ def process_queue():
             mark_queue(i['_id'])
             write_nfo(i['_id'], i['title'])
             get_thumbnail(i['thumbnail'], i['title'])
+
 
         time.sleep(10)
 

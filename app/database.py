@@ -3,7 +3,7 @@
 Connection to database
 """
 import pymongo
-import config as cfg 
+import app.config as cfg 
 
 CLIENT = pymongo.MongoClient(cfg.MONGO_SERVER)
 DATABASE = CLIENT[cfg.MONGO_DATABASE]
