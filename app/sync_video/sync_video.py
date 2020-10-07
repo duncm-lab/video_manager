@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
+"""
+Web endpoints
+"""
+
+
 from __future__ import unicode_literals
 import sys
 import os
 import logging
 from flask import Flask
 from string import Template
+from pymongo.errors import ConnectionFailure
 
 APP_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, APP_PATH)
@@ -14,8 +20,16 @@ import app.config as cfg
 from app.config import BASE_PATH
 from add_to_queue import add_queue
 
-logging.basicConfig(filename = cfg.SYNC_VIDEO_LOG,
-        level = getattr(logging, cfg.LOG_LEVEL))
+#create a log file locally if configured log file does not exist
+log_path_check = os.path.abspath(os.path.dirname(cfg.SYNC_VIDEO_LOG))
+
+if not os.path.exists(log_path_check):
+    log_file='sync_video.log'
+else:
+    log_file=cfg.SYNC_VIDEO_LOG
+
+logging.basicConfig(filename=log_file, level=getattr(logging, cfg.LOG_LEVEL))
+
 
 logger = logging.getLogger()
 
@@ -29,7 +43,7 @@ def index():
 def sync_video(video_id):
     try:
         add_queue(video_id)
-    except Exception as e:
+    except ConnectionFailure as e:
         logger.error(e)
     return ''
 
@@ -41,17 +55,17 @@ def sync_video_tags(video_id, tags):
         tags = tags.lower()
     try:
         add_queue(video_id, tags)
-    except Exception as e:
+    except ConnectionFailure as e:
         logger.error(e)
     return ''
 
 
 @app.route('/samba/<share_name>')
 def samba_share(share_name):
- 
+
     """
     Return a share entry for a samba share to be inserted in smb.conf
-    
+
     [name]
     wide links = yes
     follow symlinks = yes
