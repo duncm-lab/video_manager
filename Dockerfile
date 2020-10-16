@@ -13,6 +13,7 @@ ARG CACHE_DATE=not_a_date
 #copy application files into container
 COPY app/config.py app/config.py
 COPY app/database.py app/database.py
+COPY app/queue_processor/template.nfo app/queue_processor/template.nfo
 COPY app/queue_processor/queue_processor.py app/queue_processor/queue_processor.py
 COPY app/sync_video/add_to_queue.py app/sync_video/add_to_queue.py
 COPY app/sync_video/sync_video.py app/sync_video/sync_video.py
