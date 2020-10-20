@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/duncm-lab/video_manager.svg?branch=main)](https://travis-ci.org/duncm-lab/video_manager)
+
 # Features
 
 + Download youtube and categories youtube videos by calling a URL endpoint e.g.
