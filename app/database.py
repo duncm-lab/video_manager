@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""
-Connection to database
+"""Connection to database
 """
 import pymongo
-import app.config as cfg 
+import app.config as cfg
 
 CLIENT = pymongo.MongoClient(cfg.MONGO_SERVER)
 DATABASE = CLIENT[cfg.MONGO_DATABASE]

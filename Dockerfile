@@ -13,10 +13,14 @@ ARG CACHE_DATE=not_a_date
 #copy application files into container
 COPY app/config.py app/config.py
 COPY app/database.py app/database.py
+COPY app/project_logging.py app/project_logging.py
 COPY app/queue_processor/template.nfo app/queue_processor/template.nfo
 COPY app/queue_processor/queue_processor.py app/queue_processor/queue_processor.py
+COPY app/queue_processor/metadata_manager.py app/queue_processor/metadata_manager.py
+COPY app/queue_processor/video_downloader.py app/queue_processor/video_downloader.py
 COPY app/sync_video/add_to_queue.py app/sync_video/add_to_queue.py
 COPY app/sync_video/sync_video.py app/sync_video/sync_video.py
+
 #expose ports for communication with the outside world
 #link container directories with host directories for data persistance
 VOLUME /mnt/files/data/logs:/logs

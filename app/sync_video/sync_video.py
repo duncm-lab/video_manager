@@ -1,46 +1,44 @@
 #!/usr/bin/env python3
-"""
-Web endpoints
+"""Web endpoints
 """
 
 
 from __future__ import unicode_literals
 import sys
 import os
-import logging
 from flask import Flask
-from string import Template
 from pymongo.errors import ConnectionFailure
 
 APP_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, APP_PATH)
 sys.path.insert(0, os.getcwd())
 
-import app.config as cfg
-from app.config import BASE_PATH
-from add_to_queue import add_queue
+from app.project_logging import logger # pylint: disable=wrong-import-position
+from app.sync_video.add_to_queue import add_queue # pylint: disable=wrong-import-position
 
-#create a log file locally if configured log file does not exist
-log_path_check = os.path.abspath(os.path.dirname(cfg.SYNC_VIDEO_LOG))
-
-if not os.path.exists(log_path_check):
-    log_file='sync_video.log'
-else:
-    log_file=cfg.SYNC_VIDEO_LOG
-
-logging.basicConfig(filename=log_file, level=getattr(logging, cfg.LOG_LEVEL))
-
-
-logger = logging.getLogger()
 
 app = Flask(__name__)
 
 @app.route('/')
-def index():
+def index() -> str:
+    """Return a generic page if site root explored
+
+    Returns:
+        str: generic string
+    """
     return 'sync_video index'
 
+
 @app.route('/Sync/<video_id>')
-def sync_video(video_id):
+def sync_video(video_id: str) -> str:
+    """Add video to database
+
+    Args:
+        video_id (str): id of video
+
+    Returns:
+        str: empty string
+    """
     try:
         add_queue(video_id)
     except ConnectionFailure as e:
@@ -48,43 +46,24 @@ def sync_video(video_id):
     return ''
 
 @app.route('/Sync/<video_id>/<tags>')
-def sync_video_tags(video_id, tags):
-    if tags.find(',') != -1:
-        tags = [tag.lower() for tag in tags.split(',')]
-    else:
-        tags = tags.lower()
+def sync_video_tags(video_id: str, tags: str) -> str:
+    """Add video to database with tags
+
+    Args:
+        video_id (str): id of video
+        tags (str): video tags separated by a comma
+        e.g. /Sync/12345/some,fun,video
+
+    Returns:
+        str: empty string
+    """
     try:
-        add_queue(video_id, tags)
+        if tags.find(',') != -1:
+            tag_list = [tag.lower() for tag in tags.split(',')]
+            add_queue(video_id, tag_list)
+        else:
+            tags = tags.lower()
+            add_queue(video_id, tags)
     except ConnectionFailure as e:
         logger.error(e)
     return ''
-
-
-@app.route('/samba/<share_name>')
-def samba_share(share_name):
-
-    """
-    Return a share entry for a samba share to be inserted in smb.conf
-
-    [name]
-    wide links = yes
-    follow symlinks = yes
-    comment = name
-    browseable = yes
-    path = BASE_PATH + name
-    guest ok = yes
-    read only = yes
-    create mask = 0700
-
-"""
-
-    samba_template = Template('[$name]\n \
-    wide links = yes\n \
-    follow symlinks = yes\n \
-    comment = $name\n \
-    browseable = yes\n \
-    path = $path$name\n \
-    guest ok = yes\n \
-    read only = yes\n \
-    create mask = 0700')
-    return samba_template.substitute(name=share_name, path=BASE_PATH)
