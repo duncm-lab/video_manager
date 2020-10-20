@@ -5,7 +5,7 @@ This file is to be copied into each docker image. It is also
 used by auxillary tools.
 """
 # see youtube_dl.YoutubeDL for list of params
-SYNC_YOUTUBE_DL_PARAMS: dict = {'simulate': True}
+SYNC_YOUTUBE_DL_PARAMS: dict = {'simulate': False}
 MONGO_SERVER: str = 'mongodb://localhost:27017'
 MONGO_DATABASE: str = 'video'
 MONGO_COLLECTION: str = 'videos'

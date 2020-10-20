@@ -100,7 +100,8 @@ def get_video(video_id: str, title: str) -> None:
 
     try:
         with youtube_dl.YoutubeDL(opts) as ydl:
-            ydl.download([video_id])
+            info_dict = ydl.extract_info(video_id)
+            ydl.process_info(info_dict)
     except (youtube_dl.utils.DownloadError, \
             youtube_dl.utils.SameFileError) as e:
         logger.error(e)
