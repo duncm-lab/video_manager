@@ -1,4 +1,4 @@
-#!/home/dunc/systools/python/bin/python3.8
+#!/usr/bin/env python3
 """Downloads data and creates related folders
 """
 
