@@ -4,19 +4,20 @@
 
 import os
 import sys
-import youtube_dl
 import re
+from youtube_dl.utils import DownloadError, SameFileError
 
 
 APP_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, APP_PATH)
 sys.path.insert(0, os.getcwd())
 
-from app.config import VIDEO_DIR # pylint: disable=wrong-import-position
-from app.config import PROCESS_YOUTUBE_DL_PARAMS # pylint: disable=wrong-import-position
 from app.database import COLLECTION # pylint: disable=wrong-import-position
 from app.project_logging import logger # pylint: disable=wrong-import-position
+from app.ydl import YoutubeDl # pylint: disable=wrong-import-position
+from app.config import YDLConfig # pylint: disable=wrong-import-position
 
+VIDEO_DIR = YDLConfig.video_dir
 
 
 def video_folder_name(title: str) -> str:
@@ -28,10 +29,18 @@ def video_folder_name(title: str) -> str:
     Returns:
         (str) sanitized folder name
 
+    Raises:
+        TypeError: type of title supplied was invalid
     """
+
+    if not isinstance(title, str):
+        raise TypeError(f'title {title} was of type {type(title)}'
+                'not str')
+
     re_comp0 = re.compile('[^A-Za-z0-9.]')
     re_comp1 = re.compile('_{2,}')
-    return re_comp1.sub('_', re_comp0.sub('_', title))
+    res =  re_comp1.sub('_', re_comp0.sub('_', title))
+    return res.lstrip('_')
 
 
 def get_path(video_id: str, title: str) -> dict:
@@ -47,6 +56,9 @@ def get_path(video_id: str, title: str) -> dict:
     Raises:
         TypeError: supplied tags not type str or list
     """
+    if not isinstance(video_id, str) or not isinstance(title, str):
+        raise TypeError('Invalid type supplied')
+
     tags: str = COLLECTION.find_one({'_id': video_id}, {'tags': True})['tags']
 
     if isinstance(tags, list): # TODO check list of strings
@@ -55,6 +67,7 @@ def get_path(video_id: str, title: str) -> dict:
         sub_dir = tags
     else:
         raise TypeError(f'Invalid tag type {type(tags)}')
+
 
     path: str = os.path.join(VIDEO_DIR, sub_dir, video_folder_name(title))
     if os.path.exists(path):
@@ -84,28 +97,25 @@ def create_path(video_id: str, title: str) -> None:
 
 
 
-def get_video(video_id: str, title: str) -> None:
+def get_video(video_id: str, title: str, mode: str) -> None:
     """ Download video
 
     Args:
         video_id (str): id of youtube video
         title (str): title of video
+        mode (str): 'test' or 'live'
     """
 
     create_path(video_id, title)
     output_folder = get_path(video_id, title)['path']
-    opts = PROCESS_YOUTUBE_DL_PARAMS
-    opts['outtmpl'] = os.path.join(output_folder, '%(title)s.%(ext)s')
-    opts['logger'] = logger
+    COLLECTION.update_one({'_id': video_id}, {'$set': {'path': output_folder}})
+    y = YoutubeDl(output_folder=output_folder, mode=mode)
+    ydl = y.ydl
 
     try:
-        with youtube_dl.YoutubeDL(opts) as ydl:
+        with ydl:
             info_dict = ydl.extract_info(video_id)
             ydl.process_info(info_dict)
-    except (youtube_dl.utils.DownloadError, \
-            youtube_dl.utils.SameFileError) as e:
+    except (DownloadError, SameFileError) as e:
         logger.error(e)
-        logger.info('failed to download video %s,'
-                'calling failback function generic_video', video_id)
-        pass
-
+        logger.info('failed to download video %s', video_id)

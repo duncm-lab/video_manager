@@ -14,7 +14,7 @@ sys.path.insert(0, APP_PATH)
 sys.path.insert(0, os.getcwd())
 
 from app.project_logging import logger # pylint: disable=wrong-import-position
-from app.sync_video.add_to_queue import add_queue # pylint: disable=wrong-import-position
+from app.sync_video.queue_manager import add_queue, delete_video # pylint: disable=wrong-import-position
 
 
 app = Flask(__name__)
@@ -37,13 +37,20 @@ def sync_video(video_id: str) -> str:
         video_id (str): id of video
 
     Returns:
-        str: empty string
+        str: 'Invalid data' and error occurred
+        str: '{video_id}' added
     """
     try:
-        add_queue(video_id)
+        res = add_queue(video_id)
     except ConnectionFailure as e:
         logger.error(e)
-    return ''
+        res = False
+
+    if res is False:
+        return 'Invalid data check log for error'
+    else:
+        return f'{video_id} added'
+
 
 @app.route('/Sync/<video_id>/<tags>')
 def sync_video_tags(video_id: str, tags: str) -> str:
@@ -60,10 +67,42 @@ def sync_video_tags(video_id: str, tags: str) -> str:
     try:
         if tags.find(',') != -1:
             tag_list = [tag.lower() for tag in tags.split(',')]
-            add_queue(video_id, tag_list)
+            res = add_queue(video_id, tag_list)
         else:
             tags = tags.lower()
-            add_queue(video_id, tags)
+            res = add_queue(video_id, tags)
     except ConnectionFailure as e:
         logger.error(e)
-    return ''
+
+    if res is False:
+        return 'Invalid Data check log for error'
+    else:
+        return f'{video_id}, {tags} added'
+
+
+@app.route('/delete/<video_id>')
+def sync_delete_video(video_id: str) -> str:
+    """delete a video from the database
+
+    Args:
+        video_id (str): the video_id
+
+    Returns:
+        str: '{video_id} has been removed from db'
+        str: '{video_id} not found'
+    """
+    del_res = delete_video(video_id)
+
+    if del_res[0] == 0:
+        res = f'{video_id} not found'
+    elif del_res[0] == 1:
+        res = f'{video_id} has been removed from db' \
+                'however no path key was found in document' \
+                'you will have to manually remove this'
+    elif del_res[0] == 2:
+        res = f'{video_id} has been removed from db' \
+                '{del_res[1]} removed'
+    else:
+        res = 'unknown issues'
+
+    return res

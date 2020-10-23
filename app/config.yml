@@ -1,0 +1,11 @@
+logging:
+    log_level: DEBUG
+    log_location: /logs
+mongo_db:
+    mongo_server: mongodb://localhost:27017
+    mongo_database: 'video'
+    mongo_collection: 'videos'
+youtube_dl:
+    video_format: bestvideo[height<=720]+bestaudio/best[height<=720]
+    video_dir: /mnt/files/share/video/
+    outtmpl: '%(title)s.%(ext)s'

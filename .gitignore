@@ -1,5 +1,7 @@
 archive
 video_env/
+.coverage
+.todo.md
 __pycache__
 *.txt
 tools/
@@ -12,4 +14,4 @@ tools/
 *.log
 x*
 env/
-env/
+cleanup.sh

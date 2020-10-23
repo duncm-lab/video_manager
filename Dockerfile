@@ -23,9 +23,9 @@ COPY app/sync_video/sync_video.py app/sync_video/sync_video.py
 
 #expose ports for communication with the outside world
 #link container directories with host directories for data persistance
-VOLUME /mnt/files/data/logs:/logs
-VOLUME /mnt/files/data/mongo:/data/db
-VOLUME /mnt/files/share/video:/mnt/files/share/video
+VOLUME /mnt/files/data/logs:/logs #app
+VOLUME /mnt/files/data/mongo:/data/db #mongo
+VOLUME /mnt/files/share/video:/mnt/files/share/video #app
 # application start
 COPY main.sh .
 RUN chmod +x main.sh

@@ -28,12 +28,13 @@ def mark_queue(video_id: str) -> None:
 
 def process_queue() -> None:
     """Loop and check for new records and call
-    processing functions if found"""
+    processing functions if found
+    """
     while True:
         unprocessed = COLLECTION.find({'Processed': False}, {'_id': True, \
             'title': True, 'thumbnail': True})
         for i in unprocessed:
-            get_video(i['_id'], i['title'])
+            get_video(i['_id'], i['title'],mode='live')
             mark_queue(i['_id'])
             write_nfo(i['_id'], i['title'])
             get_thumbnail(i['_id'], i['title'])

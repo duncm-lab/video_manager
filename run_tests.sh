@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
-python3 -m pylint app
-python3 -m mypy app
-python3 -m nose app
+find . -type f -name 'app.log' -exec rm -rf {} \;
+coverage erase
+python3 -m pylint --rcfile=.pylintrc app
+python3 -m mypy --config-file .mypy.ini app
+coverage run -m --source=app  unittest discover  ./app/tests

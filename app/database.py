@@ -2,8 +2,8 @@
 """Connection to database
 """
 import pymongo
-import app.config as cfg
+from app.config import DBConfig as cfg
 
-CLIENT = pymongo.MongoClient(cfg.MONGO_SERVER)
-DATABASE = CLIENT[cfg.MONGO_DATABASE]
-COLLECTION = DATABASE[cfg.MONGO_COLLECTION]
+CLIENT = pymongo.MongoClient(cfg.mongo_server)
+DATABASE = CLIENT[cfg.mongo_database]
+COLLECTION = DATABASE[cfg.mongo_collection]
