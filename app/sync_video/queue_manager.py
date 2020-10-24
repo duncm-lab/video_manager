@@ -2,20 +2,16 @@
 """Add unprocessed items to the database
 """
 
-import sys
 import os
 import shutil
 import youtube_dl
 from datetime import datetime
 from typing import Union, List, Tuple
 
-APP_PATH = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, APP_PATH)
-sys.path.insert(0, os.getcwd())
 
-from app.database import COLLECTION # pylint: disable=wrong-import-position
-from app.project_logging import logger # pylint: disable=wrong-import-position
-from app.ydl import YoutubeDl # pylint: disable=wrong-import-position
+from app.database import COLLECTION
+from app.project_logging import logger
+from app.ydl import YoutubeDl
 
 
 ydl = YoutubeDl(output_folder='', mode='test')
@@ -23,7 +19,7 @@ INFO_EXTRACTOR = ydl.ydl
 
 
 def get_video_info(video_id: str,
-        tags: Union[List, str]=None) -> Union[None, dict]:
+                   tags: Union[List, str] = None) -> Union[None, dict]:
     """get metadata for video
 
     Args:
@@ -72,6 +68,7 @@ def get_video_info(video_id: str,
 
     return info
 
+
 def check_db(video_id: str) -> bool:
     """Query the database and assert if the value exists.
 
@@ -98,7 +95,7 @@ def check_db(video_id: str) -> bool:
     return ret
 
 
-def add_queue(video_id: str, tags: Union[List, str]=None) -> bool:
+def add_queue(video_id: str, tags: Union[List, str] = None) -> bool:
     """If the video_id does not exist, insert
     an entry into the database from the information
     provided by get_video_info
@@ -147,7 +144,7 @@ def delete_video(video_id: str) -> Tuple[int, str]:
     """
 
     result = COLLECTION.find_one({'_id': video_id},
-            {'_id': True, 'path': True})
+                                 {'_id': True, 'path': True})
 
     if not result:
         res = (0, '')
@@ -163,7 +160,7 @@ def delete_video(video_id: str) -> Tuple[int, str]:
         except FileNotFoundError as e:
             logger.error(e)
         res = (2, path)
-        logger.info('video_id %s deleted - folder %s deleted', \
-                video_id, path)
+        logger.info('video_id %s deleted - folder %s deleted',
+                    video_id, path)
 
     return res

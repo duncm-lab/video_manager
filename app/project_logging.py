@@ -3,7 +3,7 @@ import os
 import logging
 
 
-from app.config import LogConfig as cfg # pylint: disable=wrong-import-position
+from app.config import LogConfig as cfg
 
 
 if not os.path.exists(cfg.log_location):
@@ -13,7 +13,7 @@ else:
 
 
 logging.basicConfig(filename=os.path.join(log_path, 'app.log'),
-        level=cfg.log_level,
-        format='%(asctime)s %(levelname)s %(module)s'
-            '%(lineno)s %(funcName)s %(message)s')
+                    level=cfg.log_level,
+                    format='%(asctime)s %(levelname)s %(module)s'
+                    '%(lineno)s %(funcName)s %(message)s')
 logger = logging.getLogger()

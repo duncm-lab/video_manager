@@ -4,20 +4,15 @@
 
 
 from __future__ import unicode_literals
-import sys
-import os
 from flask import Flask
 from pymongo.errors import ConnectionFailure
 
-APP_PATH = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, APP_PATH)
-sys.path.insert(0, os.getcwd())
-
-from app.project_logging import logger # pylint: disable=wrong-import-position
-from app.sync_video.queue_manager import add_queue, delete_video # pylint: disable=wrong-import-position
+from app.project_logging import logger
+from app.sync_video.queue_manager import add_queue, delete_video
 
 
 app = Flask(__name__)
+
 
 @app.route('/')
 def index() -> str:

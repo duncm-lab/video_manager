@@ -3,19 +3,13 @@
 """
 
 import os
-import sys
 import re
 from youtube_dl.utils import DownloadError, SameFileError
 
-
-APP_PATH = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, APP_PATH)
-sys.path.insert(0, os.getcwd())
-
-from app.database import COLLECTION # pylint: disable=wrong-import-position
-from app.project_logging import logger # pylint: disable=wrong-import-position
-from app.ydl import YoutubeDl # pylint: disable=wrong-import-position
-from app.config import YDLConfig # pylint: disable=wrong-import-position
+from app.database import COLLECTION
+from app.project_logging import logger
+from app.ydl import YoutubeDl
+from app.config import YDLConfig
 
 VIDEO_DIR = YDLConfig.video_dir
 
@@ -35,11 +29,11 @@ def video_folder_name(title: str) -> str:
 
     if not isinstance(title, str):
         raise TypeError(f'title {title} was of type {type(title)}'
-                'not str')
+                        'not str')
 
     re_comp0 = re.compile('[^A-Za-z0-9.]')
     re_comp1 = re.compile('_{2,}')
-    res =  re_comp1.sub('_', re_comp0.sub('_', title))
+    res = re_comp1.sub('_', re_comp0.sub('_', title))
     return res.lstrip('_')
 
 
@@ -61,13 +55,12 @@ def get_path(video_id: str, title: str) -> dict:
 
     tags: str = COLLECTION.find_one({'_id': video_id}, {'tags': True})['tags']
 
-    if isinstance(tags, list): # TODO check list of strings
+    if isinstance(tags, list):  # TODO check list of strings
         sub_dir = '/'.join(tags)
     elif isinstance(tags, str):
         sub_dir = tags
     else:
         raise TypeError(f'Invalid tag type {type(tags)}')
-
 
     path: str = os.path.join(VIDEO_DIR, sub_dir, video_folder_name(title))
     if os.path.exists(path):
@@ -89,13 +82,11 @@ def create_path(video_id: str, title: str) -> None:
     exists: bool = check.__getitem__('exists')
     path: str = check.__getitem__('path')
 
-
     if not exists:
         os.makedirs(path)
         logger.info('Creating path %s', path)
     else:
         logger.info('Existing path %s found', path)
-
 
 
 def get_video(video_id: str, title: str, mode: str) -> None:

@@ -43,7 +43,7 @@ class TestGetPath(unittest.TestCase):
             os.rmdir(cls.test_folder)
             os.rmdir('./blurgh')
 
-    
+
     def test_01_get_path(self):
         """raise type error for invalid values
         passed to get_path"""
@@ -60,7 +60,7 @@ class TestGetPath(unittest.TestCase):
         add_queue(self.test_video_id, 'blurgh')
         x = get_path(self.test_video_id, 'calm owl')
         self.assertEqual(x, {
-            'path': self.test_folder, 
+            'path': self.test_folder,
             'exists': False})
 
 
@@ -70,7 +70,7 @@ class TestGetPath(unittest.TestCase):
         os.makedirs(self.test_folder)
         x = get_path(self.test_video_id, 'calm_owl')
         self.assertEqual(x, {
-            'path': self.test_folder, 
+            'path': self.test_folder,
             'exists': True})
 
 

@@ -11,6 +11,7 @@ from typing import Any, Dict
 
 path = os.path.dirname(os.path.abspath(__file__))
 
+
 def load_config(config_section: str) -> dict:
     """Read settings from config.yml
     Args:

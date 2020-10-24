@@ -23,7 +23,7 @@ class YDLParams(YDLConfig):
         downloaded False if not
         mode (str): 'test' or 'live'
     """
-    def __init__(self, output_folder: str='', mode: str=''):
+    def __init__(self, output_folder: str = '', mode: str = ''):
 
         params: Dict[Any, Any] = {}
         params['logger'] = logger
@@ -39,7 +39,8 @@ class YDLParams(YDLConfig):
 
         self.params = params
 
+
 class YoutubeDl(YDLParams):
-    def __init__(self, output_folder: str, mode: str=''):
+    def __init__(self, output_folder: str, mode: str = ''):
         YDLParams.__init__(self, output_folder, mode)
         self.ydl = youtube_dl.YoutubeDL(params=self.params)
