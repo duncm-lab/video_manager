@@ -4,6 +4,7 @@ from app.queue_processor.video_downloader import video_folder_name
 from app.queue_processor.video_downloader import get_path
 from app.queue_processor.video_downloader import create_path
 from app.queue_processor.video_downloader import get_video
+from app.project_logging import logger
 import os
 
 
@@ -11,6 +12,7 @@ from app.sync_video.queue_manager import add_queue, delete_video
 
 
 class TestVideoFolderName(unittest.TestCase):
+    """Test function video_folder_name"""
 
 
     def test_01_video_folder_name(self):
@@ -28,15 +30,18 @@ class TestVideoFolderName(unittest.TestCase):
 
 
 class TestGetPath(unittest.TestCase):
+    """Test function get_path"""
 
 
     @classmethod
     def setUpClass(cls):
         cls.test_video_id = 'FBgLytbB-uE'
         cls.test_folder = './blurgh/calm_owl'
+        delete_video(cls.test_video_id)
+        #TODO delete_video should take care of the folders
         if os.path.exists(cls.test_folder):
             os.rmdir(cls.test_folder)
-        delete_video(cls.test_video_id)
+            os.rmdir('./blurgh')
 
     
     def test_01_get_path(self):
@@ -60,7 +65,6 @@ class TestGetPath(unittest.TestCase):
 
 
     def test_03_get_path(self):
-        #TODO a test value needs inserting to db for this to work
         """check values for existing video_id"""
         add_queue(self.test_video_id, 'blurgh')
         os.makedirs(self.test_folder)
@@ -73,14 +77,41 @@ class TestGetPath(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         delete_video(cls.test_video_id)
-        os.rmdir(cls.test_folder)
+
 
 class TestCreatePath(unittest.TestCase):
-    pass
+    """Test function create_path"""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.test_video_id = 'FBgLytbB-uE'
+        delete_video(cls.test_video_id)
+
+
+    def test_01_create_path(self):
+        """path should be video_dir/subdirs/title"""
+        add_queue(self.test_video_id, 'blurgh')
+        create_path(self.test_video_id, 'calm owl')
+        self.assertTrue(os.path.exists('./blurgh/calm_owl'))
+
+
+    @classmethod
+    def tearDownClass(cls):
+        pass
+        delete_video(cls.test_video_id)
+        #os.rmdir('./blurgh/calm_owl')
+        #os.rmdir('./blurgh')
 
 
 class TestGetVideo(unittest.TestCase):
-    pass
+    """Test function get_video"""
+
+
+    def test_01_get_video(self):
+        """download non existant video"""
+        add_queue('FBgLytbB-uE', 'blurgh')
+        get_video('FBgLytbB-uE', 'calm owl', 'test')
+        delete_video('FBgLytbB-uE')
 
 
 if __name__ == '__main__':

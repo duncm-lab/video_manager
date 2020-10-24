@@ -4,6 +4,7 @@
 
 import sys
 import os
+import shutil
 import youtube_dl
 from datetime import datetime
 from typing import Union, List, Tuple
@@ -153,10 +154,16 @@ def delete_video(video_id: str) -> Tuple[int, str]:
     elif 'path' not in result.keys():
         COLLECTION.delete_one({'_id': video_id})
         res = (1, '')
+        logger.info('video_id %s deleted - no folder found', video_id)
     else:
         COLLECTION.delete_one({'_id': video_id})
         path: str = result['path']
-        os.rmdir(path)
+        try:
+            shutil.rmtree(os.path.split(path)[0], ignore_errors=True)
+        except FileNotFoundError as e:
+            logger.error(e)
         res = (2, path)
+        logger.info('video_id %s deleted - folder %s deleted', \
+                video_id, path)
 
     return res

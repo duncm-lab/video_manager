@@ -89,9 +89,10 @@ def create_path(video_id: str, title: str) -> None:
     exists: bool = check.__getitem__('exists')
     path: str = check.__getitem__('path')
 
+
     if not exists:
-        logger.info('Creating path %s', path)
         os.makedirs(path)
+        logger.info('Creating path %s', path)
     else:
         logger.info('Existing path %s found', path)
 
