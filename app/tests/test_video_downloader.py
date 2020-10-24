@@ -33,7 +33,7 @@ class TestGetPath(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.test_video_id = 'FBgLytbB-uE'
-        cls.test_folder = '/mnt/files/share/video/blurgh/calm_owl'
+        cls.test_folder = './blurgh/calm_owl'
         if os.path.exists(cls.test_folder):
             os.rmdir(cls.test_folder)
         delete_video(cls.test_video_id)
