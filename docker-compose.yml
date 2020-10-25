@@ -20,6 +20,8 @@ services:
     app:
         container_name: video_app
         hostname: video_app 
+        environment:
+            - "PYTHONPATH=/code/"
         build: .
         restart: always
         volumes: 
