@@ -25,9 +25,7 @@ class YDLParams(YDLConfig):
     """
     def __init__(self, output_folder: str = '', mode: str = ''):
 
-        params: Dict[Any, Any] = {}
-        params['logger'] = logger
-        params['format'] = self.video_format
+        params: Dict[Any, Any] = {'logger': logger, 'format': self.video_format}
         if mode == 'test':
             params['simulate'] = True
         elif mode == 'live':

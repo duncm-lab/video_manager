@@ -2,7 +2,7 @@
 """Config parameters for application
 
 This file is to be copied into each docker image. It is also
-used by auxillary tools.
+used by auxiliary tools.
 """
 # see help(youtube_dl.YoutubeDL) for list of params
 import yaml

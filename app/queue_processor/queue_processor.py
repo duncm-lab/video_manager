@@ -3,38 +3,29 @@
 """
 
 import time
-from app.project_logging import logger
-from app.database import COLLECTION
-from app.queue_processor.video_downloader import get_video
-from app.queue_processor.metadata_manager import write_nfo, get_thumbnail
+import sys
+from app.video import VideoSearch
+from app.queue_processor.video_downloader import VideoDownloader
+from app.queue_processor.metadata_manager import MetadataManager
 
 
-def mark_queue(video_id: str) -> None:
-    """Update database to mark item as processed
-
-    Args:
-        video_id (str): id of video
-    """
-    logger.info('Setting %s as processed', video_id)
-    COLLECTION.update_one({'_id': video_id}, {'$set': {'Processed': True}})
-
-
-def process_queue() -> None:
+def process_queue(mode='test') -> None:
     """Loop and check for new records and call
     processing functions if found
     """
     while True:
-        unprocessed = COLLECTION.find({'Processed': False},
-                                      {'_id': True, 'title': True,
-                                       'thumbnail': True})
-        for i in unprocessed:
-            get_video(i['_id'], i['title'], mode='live')
-            mark_queue(i['_id'])
-            write_nfo(i['_id'], i['title'])
-            get_thumbnail(i['_id'], i['title'])
+        vid = VideoSearch.get_next_unprocessed()
+        if vid:
+            vid.processing = True
+            vdl = VideoDownloader(vid, mode)
+            vdl.get_video()
+            meta = MetadataManager(vid)
+            meta.get_thumbnail()
+            meta.write_nfo()
 
         time.sleep(10)
 
 
 if __name__ == '__main__':
-    process_queue()
+    set_mode = "live"
+    process_queue(set_mode)

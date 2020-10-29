@@ -2,11 +2,9 @@
 """Add unprocessed items to the database
 """
 
-import os
-import shutil
 import youtube_dl
 from datetime import datetime
-from typing import Union, List, Tuple
+from typing import Union, List
 
 
 from app.database import COLLECTION
@@ -19,7 +17,7 @@ INFO_EXTRACTOR = ydl.ydl
 
 
 def get_video_info(video_id: str,
-                   tags: Union[List, str] = None) -> Union[None, dict]:
+                   tags: List = None) -> Union[None, dict]:
     """get metadata for video
 
     Args:
@@ -88,14 +86,14 @@ def check_db(video_id: str) -> bool:
 
     result = [i['_id'] for i in COLLECTION.find({'_id': video_id})]
 
-    if result == []:
+    if not result:
         ret = False
     else:
         ret = True
     return ret
 
 
-def add_queue(video_id: str, tags: Union[List, str] = None) -> bool:
+def add_queue(video_id: str, tags: list = None) -> bool:
     """If the video_id does not exist, insert
     an entry into the database from the information
     provided by get_video_info
@@ -111,56 +109,23 @@ def add_queue(video_id: str, tags: Union[List, str] = None) -> bool:
     Raises:
         TypeError: invalid video_id type
     """
+    ret = False
+    vid_info = None
 
+    if tags is None:
+        tags = ['undefined']
     if not isinstance(video_id, str):
         raise TypeError(f'{video_id} should be str not {type(video_id)}')
 
     if check_db(video_id) is True:
         logger.info('video_id %s already exists in database', video_id)
-        return False
+        ret = False
     else:
         vid_info = get_video_info(video_id, tags)
 
     if vid_info is not None:
         COLLECTION.insert_one(get_video_info(video_id, tags))
         logger.info('%s successfully inserted', video_id)
+        ret = True
 
-    return True
-
-
-def delete_video(video_id: str) -> Tuple[int, str]:
-    """Find and delete a video document from the database and file
-    system
-
-    Args:
-        video_id (str): video_id
-
-    Returns:
-        int: 0 - the document was not found
-        int: 1 - the document was found and deleted
-        but had not path key
-        int: 2 - the document and path were found
-        both were deleted
-    """
-
-    result = COLLECTION.find_one({'_id': video_id},
-                                 {'_id': True, 'path': True})
-
-    if not result:
-        res = (0, '')
-    elif 'path' not in result.keys():
-        COLLECTION.delete_one({'_id': video_id})
-        res = (1, '')
-        logger.info('video_id %s deleted - no folder found', video_id)
-    else:
-        COLLECTION.delete_one({'_id': video_id})
-        path: str = result['path']
-        try:
-            shutil.rmtree(os.path.split(path)[0], ignore_errors=True)
-        except FileNotFoundError as e:
-            logger.error(e)
-        res = (2, path)
-        logger.info('video_id %s deleted - folder %s deleted',
-                    video_id, path)
-
-    return res
+    return ret

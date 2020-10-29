@@ -8,7 +8,8 @@ from flask import Flask
 from pymongo.errors import ConnectionFailure
 
 from app.project_logging import logger
-from app.sync_video.queue_manager import add_queue, delete_video
+from app.video import VideoSearch
+from app.sync_video.queue_manager import add_queue
 
 
 app = Flask(__name__)
@@ -59,12 +60,15 @@ def sync_video_tags(video_id: str, tags: str) -> str:
     Returns:
         str: empty string
     """
+
+    res = False
+
     try:
         if tags.find(',') != -1:
             tag_list = [tag.lower() for tag in tags.split(',')]
             res = add_queue(video_id, tag_list)
         else:
-            tags = tags.lower()
+            tags = [tags.lower()]
             res = add_queue(video_id, tags)
     except ConnectionFailure as e:
         logger.error(e)
@@ -86,7 +90,8 @@ def sync_delete_video(video_id: str) -> str:
         str: '{video_id} has been removed from db'
         str: '{video_id} not found'
     """
-    del_res = delete_video(video_id)
+    vid = VideoSearch.exact_find_video(_id=video_id)
+    del_res = vid.delete_video(check=True)
 
     if del_res[0] == 0:
         res = f'{video_id} not found'
