@@ -2,7 +2,6 @@
 """Web endpoints
 """
 
-
 from __future__ import unicode_literals
 from flask import Flask
 from pymongo.errors import ConnectionFailure
@@ -68,8 +67,8 @@ def sync_video_tags(video_id: str, tags: str) -> str:
             tag_list = [tag.lower() for tag in tags.split(',')]
             res = add_queue(video_id, tag_list)
         else:
-            tags = [tags.lower()]
-            res = add_queue(video_id, tags)
+            tag_list = [tags.lower()]
+            res = add_queue(video_id, tag_list)
     except ConnectionFailure as e:
         logger.error(e)
 

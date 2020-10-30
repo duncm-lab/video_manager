@@ -9,7 +9,7 @@ from app.queue_processor.video_downloader import VideoDownloader
 from app.queue_processor.metadata_manager import MetadataManager
 
 
-def process_queue(mode='test') -> None:
+def process_queue(mode: str = 'test') -> None:
     """Loop and check for new records and call
     processing functions if found
     """

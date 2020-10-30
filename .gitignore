@@ -10,3 +10,6 @@ cleanup.sh
 /nohup.out
 /doc
 .idea
+tags
+tags.lock
+tags.temp

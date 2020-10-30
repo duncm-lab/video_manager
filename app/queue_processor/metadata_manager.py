@@ -43,20 +43,20 @@ class MetadataManager(FolderManager):
         path = self.get_path()['path']
         logger.info('writing thumbnail to path %s', path)
         image_data.save(os.path.join(path, 'thumbnail.jpg'), 'jpeg')
-    
+
     def write_nfo(self) -> None:
         """ Create an nfo file and write to path"""
 
         i = COLLECTION.find_one({'_id': self.video_id},
                                 {'_id': True, 'uploader': True, 'title': True,
                                  'description': True, 'upload_date': True})
-    
+
         try:
             with open(os.path.join(APP_PATH, 'template.nfo'), 'r') as fl:
                 template = Template(fl.read())
         except FileNotFoundError as e:
             logger.error(e)
-    
+
         out_template = template.substitute(
                 unique_id=i['_id'],
                 studio=i['uploader'],
