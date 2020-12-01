@@ -26,7 +26,7 @@ load-plugins=pylint.extensions.docparams,pylint.extensions.docstyle,pylint.exten
 accept-no-param-doc=no
 accept-no-raise-doc=no
 accept-no-return-doc=no
-accespt-no-yields-doc=no
+accept-no-yields-doc=no
 
 #http://pylint.pycqa.org/en/latest/technical_reference/extensions.html#multiple-types-checker
 

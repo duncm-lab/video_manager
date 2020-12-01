@@ -2,14 +2,18 @@
 """Connection to database
 """
 import pymongo
-from app.config import DBConfig as cfg
+from app.config_loader import load_config
 
-CLIENT = pymongo.MongoClient(cfg.mongo_server)
+mongo_server = load_config('mongo_db')['mongo_server']
+db = load_config('mongo_db')['mongo_database']
+col = load_config('mongo_db')['mongo_collection']
 
-if 'video' not in CLIENT.list_database_names():
-    newdb = CLIENT[cfg.mongo_database]
-    newdb.create_collection(cfg.mongo_collection)
+CLIENT = pymongo.MongoClient(mongo_server)
+
+if db not in CLIENT.list_database_names():
+    newdb = CLIENT[db]
+    newdb.create_collection(col)
 
 
-DATABASE = CLIENT[cfg.mongo_database]
-COLLECTION = DATABASE[cfg.mongo_collection]
+DATABASE = CLIENT[db]
+COLLECTION = DATABASE[col]

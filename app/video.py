@@ -90,12 +90,15 @@ class Video:
         """flag for whether the video has been downloaded
         Return:
             bool: processed
+        Raises:
+            ValueError: attempt to set as non bool
         """
         return self._processed
 
     @processed.setter
     def processed(self, p: bool) -> None:
-        assert isinstance(p, bool)
+        if not isinstance(p, bool):
+            raise ValueError('processed must be bool')
         self._processed = p
         logger.info('processed attribute set to %s', str(p))
 
@@ -155,11 +158,15 @@ class Video:
         """file path location on disk
         Return:
             str: file path
+        Raises:
+            ValueError: attempt to set as non bool
         """
         return self._file_path
 
     @file_path.setter
     def file_path(self, path: str) -> None:
+        if not isinstance(path, str):
+            raise ValueError('Path must be str')
         self._file_path = path
         logger.info('file_path attribute set to %s', path)
 
@@ -170,12 +177,15 @@ class Video:
 
         Return:
             bool: processing status
+        Raises:
+            ValueError: attempt to set as non bool
         """
         return self._processing
 
     @processing.setter
     def processing(self, p: bool) -> None:
-        assert isinstance(p, bool)
+        if not isinstance(p, bool):
+            raise ValueError('processing flag must be bool')
         self._processing = p
         logger.info('processing attribute set to %s', str(p))
 
@@ -283,6 +293,8 @@ class VideoSearch:
             tags = 'undefined'
         if 'file_path' in result.keys():
             file_path = result['file_path']
+        else:
+            file_path = ''
 
         ret = Video(mode, vid, processed, title, uploader, upload_date,
                     description, thumbnail, tags, file_path)
